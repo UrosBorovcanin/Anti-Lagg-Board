@@ -30,7 +30,7 @@
 #include "bsp/board.h"
 #include "tusb.h"
 
-#include "usb_descriptors.h"
+#include "keyboard/usb_descriptors.h"
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES

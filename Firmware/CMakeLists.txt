@@ -18,7 +18,7 @@ add_executable(${PROJECT})
 # Example source
 target_sources(${PROJECT} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/main.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/usb_descriptors.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/keyboard/usb_descriptors.c
         )
 
 # Example include
