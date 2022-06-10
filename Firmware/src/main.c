@@ -29,8 +29,10 @@
 
 #include "bsp/board.h"
 #include "tusb.h"
+#include "pico/stdlib.h"
 
 #include "keyboard/usb_descriptors.h"
+#include "keyboard/keyboard.h"
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
@@ -49,6 +51,7 @@ enum  {
 
 static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
+void firmware_init();
 void led_blinking_task(void);
 void hid_task(void);
 
@@ -57,6 +60,7 @@ int main(void)
 {
   board_init();
   tusb_init();
+  firmware_init();
 
   while (1)
   {
@@ -67,6 +71,17 @@ int main(void)
   }
 
   return 0;
+}
+
+//--------------------------------------------------------------------+
+// Firmware initialization
+//--------------------------------------------------------------------+
+
+//Function that initializes the modlues of the keyboard
+void firmware_init()
+{
+  gpio_init_mask(kbd_mask());
+  //TO DO other modules
 }
 
 //--------------------------------------------------------------------+
@@ -120,7 +135,8 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
       {
         uint8_t keycode[13] = { 0 };
 
-        keycode[1] = 0xFF;
+        keycode[0] = 0b10000000;
+        keycode[1] = 0b10000001;
 
         tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, 0, keycode);
         has_keyboard_key = true;
