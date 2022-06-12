@@ -81,6 +81,8 @@ int main(void)
 void firmware_init()
 {
   gpio_init_mask(kbd_mask());
+  gpio_set_dir_in_masked(col_pin_mask());
+  gpio_set_dir_out_masked(row_pin_mask());
   //TO DO other modules
 }
 
@@ -133,10 +135,14 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
 
       if ( btn )
       {
+        int keyPresses[104] = { 0 };
         uint8_t keycode[13] = { 0 };
 
-        keycode[0] = 0b10000000;
-        keycode[1] = 0b10000001;
+        uint8_t KeyHTest[] = HID_NKRO_KEY_H;
+
+        keycode[KeyHTest[0]] |= KeyHTest[1];
+
+        detect_keypresses(keyPresses);
 
         tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, 0, keycode);
         has_keyboard_key = true;
