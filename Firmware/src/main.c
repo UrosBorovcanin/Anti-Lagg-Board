@@ -135,14 +135,15 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
 
       if ( btn )
       {
-        int keyPresses[104] = { 0 };
+        KEY_VALUE keyPresses[61] = { 0 };
+        int numberOfKeyPresses = 0;
         uint8_t keycode[13] = { 0 };
 
         uint8_t KeyHTest[] = HID_NKRO_KEY_H;
 
         keycode[KeyHTest[0]] |= KeyHTest[1];
 
-        detect_keypresses(keyPresses);
+        numberOfKeyPresses = detect_keypresses(keyPresses);
 
         tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, 0, keycode);
         has_keyboard_key = true;

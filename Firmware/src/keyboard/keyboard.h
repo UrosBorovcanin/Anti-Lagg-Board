@@ -8,19 +8,48 @@
 
 #include "pico/stdlib.h"
 
+//A structure used to represent a value of the key and the absolute time in which it changed value outside of a debounce timer
+typedef struct KEY_VALUE
+{
+    bool value;
+    uint64_t debounceCountdown;
+} KEY_VALUE;
 
-//Keyboard row pin definitions
+//Function used to calculate the keyboard matrix GPIO mask
+uint32_t kbd_mask();
+
+//Function used to calculate the keyboard matrix column pin GPIO mask
+uint32_t col_pin_mask();
+
+//Function used to calculate the keyboard matrix row pi GPIO mask
+uint32_t row_pin_mask();
+
+//Function used to scan the GPIO pins for keypresses
+bool detect_keypresses(KEY_VALUE *keyList);
+
+//decreases the necesary debounce countdown variables of keys by the time passed since last call
+void advance_debounce_countdown(KEY_VALUE *keyList);
+
+//Function used to translate the key matrix into a specific keypress bitmap
+void translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitMap);
+
+//Total number of pins connected to rows
 #define NUMBER_OF_ROW_PINS  5
 
+//Microcontroller pins connected to row pins
 #define ROW_PIN_0   (uint8_t)7
 #define ROW_PIN_1   (uint8_t)8
 #define ROW_PIN_2   (uint8_t)9
 #define ROW_PIN_3   (uint8_t)10
 #define ROW_PIN_4   (uint8_t)11
 
-//Keyboard column pin definitions
+//Array of row pins initialization
+#define ROW_PINS    {ROW_PIN_0, ROW_PIN_1, ROW_PIN_2, ROW_PIN_3, ROW_PIN_4}
+
+//Total number of pins connected to columns
 #define NUMBER_OF_COL_PINS  14
 
+//Microcontroller pins connected to row pins
 #define COL_PIN_0   (uint8_t)0
 #define COL_PIN_1   (uint8_t)1
 #define COL_PIN_2   (uint8_t)2
@@ -36,20 +65,12 @@
 #define COL_PIN_12  (uint8_t)17
 #define COL_PIN_13  (uint8_t)16
 
-//Function used to calculate the keyboard matrix GPIO mask
-uint32_t kbd_mask();
+//Array of column pins initialization
+#define COL_PINS    {COL_PIN_0, COL_PIN_1, COL_PIN_2, COL_PIN_3, COL_PIN_4, COL_PIN_5, COL_PIN_6, COL_PIN_7,\
+COL_PIN_8, COL_PIN_9, COL_PIN_10, COL_PIN_11, COL_PIN_12, COL_PIN_13}
 
-//Function used to calculate the keyboard matrix column pin GPIO mask
-uint32_t col_pin_mask();
-
-//Function used to calculate the keyboard matrix row pi GPIO mask
-uint32_t row_pin_mask();
-
-//Function used to scan the GPIO pins for keypresses
-void detect_keypresses(int *keyList);
-
-//Function used to translate the key matrix into a specific keypress bitmap
-void translate_keypresses_to_bitmap(bool *keyMatrix, bool *bitMap);
+//The total number of physical keys on the keyboard
+#define TOTAL_NUMBER_OF_KEYS 61
 
 //Key matrix for the 60 percent board
 //!!Numbers mark the INTERNAL key code, where -1 is NOT CONNECTED!!
@@ -69,7 +90,9 @@ void translate_keypresses_to_bitmap(bool *keyMatrix, bool *bitMap);
 {53, 54, -1, 55, 56}, /*Keys in column 12 */\
 {57, 58, 59, -1, 60}} /*Keys in column 13 */
 
-#define DEFAULT_KEYBINDS_LAYER_0 \
+
+//Keybinds for the first layer
+#define KEYBINDS_LAYER_0 {\
 {1, }, \
 {2, }, \
 {3, }, \
@@ -130,9 +153,10 @@ void translate_keypresses_to_bitmap(bool *keyMatrix, bool *bitMap);
 {58, }, \
 {59, }, \
 {60, }, \
-{61, }
+{61, }  \
+}
 
-
+//Key masks for writing proper USB report packets
 #define HID_NKRO_KEY_A                         {0, 0x10}
 #define HID_NKRO_KEY_B                         {0, 0x20}
 #define HID_NKRO_KEY_C                         {0, 0x40}

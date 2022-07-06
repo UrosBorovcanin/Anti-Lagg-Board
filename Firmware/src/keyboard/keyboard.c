@@ -20,8 +20,7 @@ uint32_t col_pin_mask()
 {
   uint32_t mask = 0;
 
-  uint8_t colPins[] = {COL_PIN_0, COL_PIN_1, COL_PIN_2, COL_PIN_3, COL_PIN_4, COL_PIN_5, COL_PIN_6, COL_PIN_7,\
-                      COL_PIN_8, COL_PIN_9, COL_PIN_10, COL_PIN_11, COL_PIN_12, COL_PIN_13};
+  uint8_t colPins[] = COL_PINS;
 
   for (int i = 0; i < NUMBER_OF_COL_PINS; i++)
   {
@@ -40,7 +39,7 @@ uint32_t row_pin_mask()
 {
   uint32_t mask = 0;
 
-  uint8_t rowPins[] = {ROW_PIN_0, ROW_PIN_1, ROW_PIN_2, ROW_PIN_3, ROW_PIN_4};
+  uint8_t rowPins[] = ROW_PINS;
 
   for (int i = 0; i < NUMBER_OF_ROW_PINS; i++)
   {
@@ -55,16 +54,15 @@ uint32_t row_pin_mask()
 
 
 
-void detect_keypresses(int *keyList)
+bool detect_keypresses(KEY_VALUE *keyList)
 {
-  int numberOfKeyPresses = 0;
+  bool numberOfKeyPresses = 0;
 
   int keyMatrix[NUMBER_OF_COL_PINS][NUMBER_OF_ROW_PINS] = KEY_MATRIX;
+  uint8_t rowPins[] = ROW_PINS;
+  uint8_t colPins[] = COL_PINS;
 
-  uint8_t rowPins[] = {ROW_PIN_0, ROW_PIN_1, ROW_PIN_2, ROW_PIN_3, ROW_PIN_4};
-
-  uint8_t colPins[] = {COL_PIN_0, COL_PIN_1, COL_PIN_2, COL_PIN_3, COL_PIN_4, COL_PIN_5, COL_PIN_6, COL_PIN_7,\
-                      COL_PIN_8, COL_PIN_9, COL_PIN_10, COL_PIN_11, COL_PIN_12, COL_PIN_13};
+  advance_debounce_countdown(keyList);
 
   for (int i = 0; i < NUMBER_OF_COL_PINS; i++)
   {
@@ -75,21 +73,62 @@ void detect_keypresses(int *keyList)
       {
         gpio_put(rowPins[j], false);
 
-        if (gpio_get(colPins[i]))
+        int currentPinNumber = keyMatrix[i][j];
+
+        if (!gpio_get(colPins[i]))
         {
-          numberOfKeyPresses++;
-          keyList[numberOfKeyPresses] = keyMatrix[i][j];
+          if (keyList[currentPinNumber].value == false)
+          {
+            keyList[currentPinNumber].debounceCountdown = 2000;
+          }
+          keyList[currentPinNumber].value = true;
+        }
+        else 
+        {
+          if (keyList[currentPinNumber].debounceCountdown == 0)
+          {
+            keyList[currentPinNumber].value = false;
+          }
         }
 
         gpio_put(rowPins[j], true);
       }
     }
+    gpio_pull_down(colPins[i]);
+  }
+  return numberOfKeyPresses;
+}
 
+void advance_debounce_countdown(KEY_VALUE *keyList)
+{
+  static uint64_t lastCallTime = 0;
+  uint64_t currentCallTime = time_us_64();
+  uint64_t callTimeDelta = currentCallTime - lastCallTime;
+
+  for (int i = 0; i < TOTAL_NUMBER_OF_KEYS; i++)
+  {
+    if (keyList[i].value == true)
+    {
+      if (keyList[i].debounceCountdown > 0)
+      {
+        if (keyList[i].debounceCountdown <= callTimeDelta)
+        {
+          keyList[i].debounceCountdown = 0;
+        }
+        else 
+        {
+          keyList[i].debounceCountdown -= callTimeDelta;
+        }
+      }
+    }
   }
 }
 
 
-void translate_keypresses_to_bitmap(bool *keyMatrix, bool *bitmap)
+void translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitmap)
 {
-
+  for (int i = 0; i < TOTAL_NUMBER_OF_KEYS; i++)
+  {
+    
+  }
 }
