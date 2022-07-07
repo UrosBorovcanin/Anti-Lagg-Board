@@ -15,7 +15,7 @@ uint32_t kbd_mask()
 }
 
 
-
+//A function that calculates the mask for the column pins of the keyboard matrix
 uint32_t col_pin_mask()
 {
   uint32_t mask = 0;
@@ -34,7 +34,7 @@ uint32_t col_pin_mask()
 }
 
 
-
+//A function that calculates the mask for the row pins of the keyboard matrix
 uint32_t row_pin_mask()
 {
   uint32_t mask = 0;
@@ -53,7 +53,8 @@ uint32_t row_pin_mask()
 }
 
 
-
+//A function that goes through columns, then rows of pins and checks for connections between them
+//thus detecting keypresses
 bool detect_keypresses(KEY_VALUE *keyList)
 {
   bool numberOfKeyPresses = 0;
@@ -79,7 +80,7 @@ bool detect_keypresses(KEY_VALUE *keyList)
         {
           if (keyList[currentPinNumber].value == false)
           {
-            keyList[currentPinNumber].debounceCountdown = 2000;
+            keyList[currentPinNumber].debounceCountdown = DEBOUNCE_TIME;
           }
           keyList[currentPinNumber].value = true;
         }
@@ -99,6 +100,8 @@ bool detect_keypresses(KEY_VALUE *keyList)
   return numberOfKeyPresses;
 }
 
+
+//A function used to manage the debounce timers on key presses
 void advance_debounce_countdown(KEY_VALUE *keyList)
 {
   static uint64_t lastCallTime = 0;
@@ -124,11 +127,18 @@ void advance_debounce_countdown(KEY_VALUE *keyList)
   }
 }
 
-
+//A function used to translate keypresses(after the debounce period) into a bitmap message to send via USB
 void translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitmap)
 {
+  uint8_t keyMatrix[NUMBER_OF_COL_PINS][NUMBER_OF_ROW_PINS] = KEY_MATRIX;
+
+  uint16_t layerZeroMap[TOTAL_NUMBER_OF_KEYS][2] = KEYBINDS_LAYER_0;
+
   for (int i = 0; i < TOTAL_NUMBER_OF_KEYS; i++)
   {
-    
+    if ((keyList[i].value) && (keyList[i].debounceCountdown == 0))
+    {
+      
+    }
   }
 }

@@ -136,10 +136,10 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
       if ( btn )
       {
         KEY_VALUE keyPresses[61] = { 0 };
-        int numberOfKeyPresses = 0;
+        bool numberOfKeyPresses = 0;
         uint8_t keycode[13] = { 0 };
 
-        uint8_t KeyHTest[] = HID_NKRO_KEY_H;
+        uint8_t KeyHTest[] = {1, 0x08};
 
         keycode[KeyHTest[0]] |= KeyHTest[1];
 
