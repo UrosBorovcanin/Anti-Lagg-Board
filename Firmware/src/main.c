@@ -137,20 +137,20 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
       {
         KEY_VALUE keyPresses[61] = { 0 };
         bool numberOfKeyPresses = 0;
-        uint8_t keycode[13] = { 0 };
+        uint8_t keycode[14] = { 0 };
 
-        uint8_t KeyHTest[] = {1, 0x08};
+        uint8_t KeyHTest[] = {2, 0x08};
 
         keycode[KeyHTest[0]] |= KeyHTest[1];
 
         numberOfKeyPresses = detect_keypresses(keyPresses);
 
-        tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, 0, keycode);
+        tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, keycode);
         has_keyboard_key = true;
       }else
       {
         // send empty key report if previously has key pressed
-        if (has_keyboard_key) tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, 0, NULL);
+        if (has_keyboard_key) tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, NULL);
         has_keyboard_key = false;
       }
     }

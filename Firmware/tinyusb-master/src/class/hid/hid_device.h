@@ -70,7 +70,7 @@ bool tud_hid_n_keyboard_report(uint8_t instance, uint8_t report_id, uint8_t modi
 
 // NKRO KEYBOARD: convenient helper to send nkro keyboard report if application
 // use template layout report as defined by hid_nkro_keyboard_report_t
-bool tud_hid_n_nkro_keyboard_report(uint8_t instance, uint8_t report_id, uint8_t modifier, uint8_t keycode[13]);
+bool tud_hid_n_nkro_keyboard_report(uint8_t instance, uint8_t report_id, uint8_t keycode[14]);
 
 // MOUSE: convenient helper to send mouse report if application
 // use template layout report as defined by hid_mouse_report_t
@@ -88,7 +88,7 @@ static inline uint8_t tud_hid_interface_protocol(void);
 static inline uint8_t tud_hid_get_protocol(void);
 static inline bool    tud_hid_report(uint8_t report_id, void const* report, uint8_t len);
 static inline bool    tud_hid_keyboard_report(uint8_t report_id, uint8_t modifier, uint8_t keycode[6]);
-static inline bool    tud_hid_nkro_keyboard_report(uint8_t report_id, uint8_t modifier, uint8_t keycode[13]);
+static inline bool    tud_hid_nkro_keyboard_report(uint8_t report_id, uint8_t keycode[14]);
 static inline bool    tud_hid_mouse_report(uint8_t report_id, uint8_t buttons, int8_t x, int8_t y, int8_t vertical, int8_t horizontal);
 static inline bool    tud_hid_gamepad_report(uint8_t report_id, int8_t x, int8_t y, int8_t z, int8_t rz, int8_t rx, int8_t ry, uint8_t hat, uint32_t buttons);
 
@@ -152,9 +152,9 @@ static inline bool tud_hid_keyboard_report(uint8_t report_id, uint8_t modifier, 
   return tud_hid_n_keyboard_report(0, report_id, modifier, keycode);
 }
 
-static inline bool tud_hid_nkro_keyboard_report(uint8_t report_id, uint8_t modifier, uint8_t keycode[13])
+static inline bool tud_hid_nkro_keyboard_report(uint8_t report_id, uint8_t keycode[14])
 {
-  return tud_hid_n_nkro_keyboard_report(0, report_id, modifier, keycode);
+  return tud_hid_n_nkro_keyboard_report(0, report_id, keycode);
 }
 
 static inline bool tud_hid_mouse_report(uint8_t report_id, uint8_t buttons, int8_t x, int8_t y, int8_t vertical, int8_t horizontal)
