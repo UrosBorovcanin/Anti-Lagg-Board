@@ -1,55 +1,48 @@
 
 
 #include "keyboard.h"
+#include "bsp/board.h"
 
 //A function that calculates the mask for the matrix pins of the keyboard
-uint32_t kbd_mask()
+void initialize_kbd_gpio()
 {
-  uint32_t mask = 0;
+  uint8_t colPins[] = COL_PINS;
+  uint8_t rowPins[] = ROW_PINS;
 
-  mask |= col_pin_mask();
+  for (int i = 0; i < NUMBER_OF_COL_PINS; i++)
+  {
+    gpio_init(colPins[i]);
+    gpio_pull_up(colPins[i]);
+  }
 
-  mask |= row_pin_mask();  
-  
-  return mask;
+  for (int i = 0; i < NUMBER_OF_ROW_PINS; i++)
+  {
+    gpio_init(rowPins[i]);
+  }
 }
 
 
 //A function that calculates the mask for the column pins of the keyboard matrix
-uint32_t col_pin_mask()
+void set_kbd_input_pins()
 {
-  uint32_t mask = 0;
-
   uint8_t colPins[] = COL_PINS;
 
   for (int i = 0; i < NUMBER_OF_COL_PINS; i++)
   {
-    uint32_t currentKeyMask = 1;
-    currentKeyMask << colPins[i];
-
-    mask |= currentKeyMask;
+    gpio_set_dir(colPins[i], false);
   }
-
-  return mask;
 }
 
 
 //A function that calculates the mask for the row pins of the keyboard matrix
-uint32_t row_pin_mask()
+void set_kbd_output_pins()
 {
-  uint32_t mask = 0;
-
   uint8_t rowPins[] = ROW_PINS;
 
   for (int i = 0; i < NUMBER_OF_ROW_PINS; i++)
   {
-    uint32_t currentKeyMask = 1;
-    currentKeyMask << rowPins[i];
-
-    mask |= currentKeyMask;
+    gpio_set_dir(rowPins[i], true);
   }
-
-  return mask;
 }
 
 
@@ -57,7 +50,7 @@ uint32_t row_pin_mask()
 //thus detecting keypresses
 bool detect_keypresses(KEY_VALUE *keyList)
 {
-  bool numberOfKeyPresses = 0;
+  bool keyPressDetected = false;
 
   int keyMatrix[NUMBER_OF_COL_PINS][NUMBER_OF_ROW_PINS] = KEY_MATRIX;
   uint8_t rowPins[] = ROW_PINS;
@@ -67,7 +60,6 @@ bool detect_keypresses(KEY_VALUE *keyList)
 
   for (int i = 0; i < NUMBER_OF_COL_PINS; i++)
   {
-    gpio_pull_up(colPins[i]);
     for (int j = 0; j < NUMBER_OF_ROW_PINS; j++)
     {
       if (keyMatrix[i][j] > -1)
@@ -83,6 +75,8 @@ bool detect_keypresses(KEY_VALUE *keyList)
             keyList[currentPinNumber].debounceCountdown = DEBOUNCE_TIME;
           }
           keyList[currentPinNumber].value = true;
+
+          keyPressDetected = true;
         }
         else 
         {
@@ -95,9 +89,8 @@ bool detect_keypresses(KEY_VALUE *keyList)
         gpio_put(rowPins[j], true);
       }
     }
-    gpio_pull_down(colPins[i]);
   }
-  return numberOfKeyPresses;
+  return keyPressDetected;
 }
 
 
@@ -107,10 +100,11 @@ void advance_debounce_countdown(KEY_VALUE *keyList)
   static uint64_t lastCallTime = 0;
   uint64_t currentCallTime = time_us_64();
   uint64_t callTimeDelta = currentCallTime - lastCallTime;
+  lastCallTime = currentCallTime;
 
   for (int i = 0; i < TOTAL_NUMBER_OF_KEYS; i++)
   {
-    if (keyList[i].value == true)
+    if (keyList[i].value)
     {
       if (keyList[i].debounceCountdown > 0)
       {
@@ -128,17 +122,20 @@ void advance_debounce_countdown(KEY_VALUE *keyList)
 }
 
 //A function used to translate keypresses(after the debounce period) into a bitmap message to send via USB
-void translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitmap)
+bool translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitmap)
 {
-  uint8_t keyMatrix[NUMBER_OF_COL_PINS][NUMBER_OF_ROW_PINS] = KEY_MATRIX;
+  bool hasKey = false;
 
-  uint16_t layerZeroMap[TOTAL_NUMBER_OF_KEYS][2] = KEYBINDS_LAYER_0;
+  uint8_t layerZeroMap[TOTAL_NUMBER_OF_KEYS][2] = KEYBINDS_LAYER_0;
 
   for (int i = 0; i < TOTAL_NUMBER_OF_KEYS; i++)
   {
-    if ((keyList[i].value) && (keyList[i].debounceCountdown == 0))
+    //if ((keyList[i].value) && (keyList[i].debounceCountdown == 0))
     {
-      
+      bitmap[layerZeroMap[i][0]] | layerZeroMap[i][1];
+      hasKey = true;
     }
   }
+  
+  return hasKey;
 }

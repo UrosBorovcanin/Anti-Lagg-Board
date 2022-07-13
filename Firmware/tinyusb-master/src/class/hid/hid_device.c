@@ -138,15 +138,15 @@ bool tud_hid_n_nkro_keyboard_report(uint8_t instance, uint8_t report_id, uint8_t
 {
   hid_nkro_keyboard_report_t report;
 
-  report.modifier = keycode[0];
-
   if (keycode)
   {
     memcpy(report.keycode, keycode + 1 , 13);
+    report.modifier = keycode[0];
   }
   else 
   {
     tu_memclr(report.keycode, 13);
+    report.modifier = 0;
   }
 
   return tud_hid_n_report(instance, report_id, &report, sizeof(report));

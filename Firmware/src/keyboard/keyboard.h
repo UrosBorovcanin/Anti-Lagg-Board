@@ -15,14 +15,14 @@ typedef struct KEY_VALUE
     uint64_t debounceCountdown;
 } KEY_VALUE;
 
-//Function used to calculate the keyboard matrix GPIO mask
-uint32_t kbd_mask();
+//Function used to 
+void initialize_kbd_gpio();
 
-//Function used to calculate the keyboard matrix column pin GPIO mask
-uint32_t col_pin_mask();
+//Function used to 
+void set_kbd_input_pins();
 
-//Function used to calculate the keyboard matrix row pi GPIO mask
-uint32_t row_pin_mask();
+//Function used to 
+void set_kbd_output_pins();
 
 //Function used to scan the GPIO pins for keypresses
 bool detect_keypresses(KEY_VALUE *keyList);
@@ -31,10 +31,10 @@ bool detect_keypresses(KEY_VALUE *keyList);
 void advance_debounce_countdown(KEY_VALUE *keyList);
 
 //Function used to translate the key matrix into a specific keypress bitmap
-void translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitMap);
+bool translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitMap);
 
 //Total amount of debounce time in microseconds
-#define DEBOUNCE_TIME       2000
+#define DEBOUNCE_TIME       10000
 
 //Total number of pins connected to rows
 #define NUMBER_OF_ROW_PINS  5
@@ -78,196 +78,260 @@ COL_PIN_8, COL_PIN_9, COL_PIN_10, COL_PIN_11, COL_PIN_12, COL_PIN_13}
 //Key matrix for the 60 percent board
 //!!Numbers mark the INTERNAL key code, where -1 is NOT CONNECTED!!
 #define KEY_MATRIX {\
-{0, 1, 2, 3, 4}, /*Keys in column 0 */\
-{5, 6, 7, -1, 8}, /*Keys in column 1 */\
-{9, 10, 11, 12, 13}, /*Keys in column 2 */\
-{14, 15, 16, 17, -1}, /*Keys in column 3 */\
-{18, 19, 20, 21, -1}, /*Keys in column 4 */\
-{22, 23, 24, 25, -1}, /*Keys in column 5 */\
-{26, 27, 28, 29, 30}, /*Keys in column 6 */\
-{31, 32, 33, 34, -1}, /*Keys in column 7 */\
-{35, 36, 37, 38, -1}, /*Keys in column 8 */\
-{39, 40, 41, 42, -1}, /*Keys in column 9 */\
-{43, 44, 45, 46, 47}, /*Keys in column 10 */\
-{48, 49, 50, 51, 52}, /*Keys in column 11 */\
-{53, 54, -1, 55, 56}, /*Keys in column 12 */\
-{57, 58, 59, -1, 60} /*Keys in column 13 */\
+{0, 14, 28, 41, 53}, /*Keys in column 0 */\
+{1, 15, 29, -1, 54}, /*Keys in column 1 */\
+{2, 16, 30, 42, 55}, /*Keys in column 2 */\
+{3, 17, 31, 43, -1}, /*Keys in column 3 */\
+{4, 18, 32, 44, -1}, /*Keys in column 4 */\
+{5, 19, 33, 45, -1}, /*Keys in column 5 */\
+{6, 20, 34, 46, 56}, /*Keys in column 6 */\
+{7, 21, 35, 47, -1}, /*Keys in column 7 */\
+{8, 22, 36, 48, -1}, /*Keys in column 8 */\
+{9, 23, 37, 49, -1}, /*Keys in column 9 */\
+{10, 24, 38, 50, 57}, /*Keys in column 10 */\
+{11, 25, 39, 51, 58}, /*Keys in column 11 */\
+{12, 26, -1, 52, 59}, /*Keys in column 12 */\
+{13, 27, 40, -1, 60} /*Keys in column 13 */\
 }
 
 
 //Keybinds for the first layer
 #define KEYBINDS_LAYER_0 {\
-HID_NKRO_KEY_GRAVE, \
-HID_NKRO_KEY_1, \
-HID_NKRO_KEY_2, \
-HID_NKRO_KEY_3, \
-HID_NKRO_KEY_4, \
-HID_NKRO_KEY_5, \
-HID_NKRO_KEY_6, \
-HID_NKRO_KEY_7, \
-HID_NKRO_KEY_8, \
-HID_NKRO_KEY_9, \
-HID_NKRO_KEY_0, \
-HID_NKRO_KEY_MINUS, \
-HID_NKRO_KEY_EQUAL, \
-HID_NKRO_KEY_BACKSPACE, \
-HID_NKRO_KEY_TAB, \
-HID_NKRO_KEY_Q, \
-HID_NKRO_KEY_W, \
-HID_NKRO_KEY_E, \
-HID_NKRO_KEY_R, \
-HID_NKRO_KEY_T, \
-HID_NKRO_KEY_Y, \
-HID_NKRO_KEY_U, \
-HID_NKRO_KEY_I, \
-HID_NKRO_KEY_O, \
-HID_NKRO_KEY_P, \
-HID_NKRO_KEY_BRACKET_LEFT, \
-HID_NKRO_KEY_BRACKET_RIGHT, \
-HID_NKRO_KEY_BACKSLASH, \
-HID_NKRO_KEY_CAPS_LOCK, \
-HID_NKRO_KEY_A, \
-HID_NKRO_KEY_S, \
-HID_NKRO_KEY_D, \
-HID_NKRO_KEY_F, \
-HID_NKRO_KEY_G, \
-HID_NKRO_KEY_H, \
-HID_NKRO_KEY_J, \
-HID_NKRO_KEY_K, \
-HID_NKRO_KEY_L, \
-HID_NKRO_KEY_SEMICOLON, \
-HID_NKRO_KEY_APOSTROPHE, \
-HID_NKRO_KEY_ENTER, \
-HID_NKRO_KEY_RIGHT_SHIFT, \
-HID_NKRO_KEY_Z, \
-HID_NKRO_KEY_X, \
-HID_NKRO_KEY_C, \
-HID_NKRO_KEY_V, \
-HID_NKRO_KEY_B, \
-HID_NKRO_KEY_N, \
-HID_NKRO_KEY_M, \
-HID_NKRO_KEY_COMMA, \
-HID_NKRO_KEY_PERIOD, \
-HID_NKRO_KEY_SLASH, \
-HID_NKRO_KEY_LEFT_SHIFT, \
-HID_NKRO_KEY_LEFT_CONTROL, \
-HID_NKRO_KEY_LEFT_GUI, \
-HID_NKRO_KEY_LEFT_ALT, \
-HID_NKRO_KEY_SPACE, \
-HID_NKRO_KEY_RIGHT_ALT, \
-HID_NKRO_KEY_RIGHT_GUI, \
-HID_NKRO_KEY_APPLICATION, \
-HID_NKRO_KEY_RIGHT_CONTROL, \
+KC_GRAVE, \
+KC_1, \
+KC_2, \
+KC_3, \
+KC_4, \
+KC_5, \
+KC_6, \
+KC_7, \
+KC_8, \
+KC_9, \
+KC_0, \
+KC_MINUS, \
+KC_EQUAL, \
+KC_BACKSPACE, \
+KC_TAB, \
+KC_Q, \
+KC_W, \
+KC_E, \
+KC_R, \
+KC_T, \
+KC_Y, \
+KC_U, \
+KC_I, \
+KC_O, \
+KC_P, \
+KC_BRACKET_LEFT, \
+KC_BRACKET_RIGHT, \
+KC_BACKSLASH, \
+KC_CAPS_LOCK, \
+KC_A, \
+KC_S, \
+KC_D, \
+KC_F, \
+KC_G, \
+KC_H, \
+KC_J, \
+KC_K, \
+KC_L, \
+KC_SEMICOLON, \
+KC_APOSTROPHE, \
+KC_ENTER, \
+KC_RIGHT_SHIFT, \
+KC_Z, \
+KC_X, \
+KC_C, \
+KC_V, \
+KC_B, \
+KC_N, \
+KC_M, \
+KC_COMMA, \
+KC_PERIOD, \
+KC_SLASH, \
+KC_LEFT_SHIFT, \
+KC_LEFT_CONTROL, \
+KC_LEFT_GUI, \
+KC_LEFT_ALT, \
+KC_SPACE, \
+KC_RIGHT_ALT, \
+KC_RIGHT_GUI, \
+KC_APPLICATION, \
+KC_RIGHT_CONTROL, \
 }
 
 //Key masks for writing proper USB report packets
-#define HID_NKRO_KEY_A                         {0 ,0x10}
-#define HID_NKRO_KEY_B                         {0 ,0x20}
-#define HID_NKRO_KEY_C                         {0 ,0x40}
-#define HID_NKRO_KEY_D                         {0 ,0x80}
-#define HID_NKRO_KEY_E                         {1 ,0x01}
-#define HID_NKRO_KEY_F                         {1 ,0x02}
-#define HID_NKRO_KEY_G                         {1 ,0x04}
-#define HID_NKRO_KEY_H                         {1 ,0x08}
-#define HID_NKRO_KEY_I                         {1 ,0x10}
-#define HID_NKRO_KEY_J                         {1 ,0x20}
-#define HID_NKRO_KEY_K                         {1 ,0x40}
-#define HID_NKRO_KEY_L                         {1 ,0x80}
-#define HID_NKRO_KEY_M                         {2 ,0x01}
-#define HID_NKRO_KEY_N                         {2 ,0x02}
-#define HID_NKRO_KEY_O                         {2 ,0x04}
-#define HID_NKRO_KEY_P                         {2 ,0x08}
-#define HID_NKRO_KEY_Q                         {2 ,0x10}
-#define HID_NKRO_KEY_R                         {2 ,0x20}
-#define HID_NKRO_KEY_S                         {2 ,0x40}
-#define HID_NKRO_KEY_T                         {2 ,0x80}
-#define HID_NKRO_KEY_U                         {3 ,0x01}
-#define HID_NKRO_KEY_V                         {3 ,0x02}
-#define HID_NKRO_KEY_W                         {3 ,0x04}
-#define HID_NKRO_KEY_X                         {3 ,0x08}
-#define HID_NKRO_KEY_Y                         {3 ,0x10}
-#define HID_NKRO_KEY_Z                         {3 ,0x20}
-#define HID_NKRO_KEY_1                         {3 ,0x40}
-#define HID_NKRO_KEY_2                         {3 ,0x80}
-#define HID_NKRO_KEY_3                         {4 ,0x01}
-#define HID_NKRO_KEY_4                         {4 ,0x02}
-#define HID_NKRO_KEY_5                         {4 ,0x04}
-#define HID_NKRO_KEY_6                         {4 ,0x08}
-#define HID_NKRO_KEY_7                         {4 ,0x10}
-#define HID_NKRO_KEY_8                         {4 ,0x20}
-#define HID_NKRO_KEY_9                         {4 ,0x40}
-#define HID_NKRO_KEY_0                         {4 ,0x80}
-#define HID_NKRO_KEY_ENTER                     {5 ,0x01}
-#define HID_NKRO_KEY_ESCAPE                    {5 ,0x02}
-#define HID_NKRO_KEY_BACKSPACE                 {5 ,0x04}
-#define HID_NKRO_KEY_TAB                       {5 ,0x08}
-#define HID_NKRO_KEY_SPACE                     {5 ,0x10}
-#define HID_NKRO_KEY_MINUS                     {5 ,0x20}
-#define HID_NKRO_KEY_EQUAL                     {5 ,0x40}
-#define HID_NKRO_KEY_BRACKET_LEFT              {5 ,0x80}
-#define HID_NKRO_KEY_BRACKET_RIGHT             {6 ,0x01}
-#define HID_NKRO_KEY_BACKSLASH                 {6 ,0x02}
-#define HID_NKRO_KEY_EUROPE_1                  {6 ,0x04}
-#define HID_NKRO_KEY_SEMICOLON                 {6 ,0x08}
-#define HID_NKRO_KEY_APOSTROPHE                {6 ,0x10}
-#define HID_NKRO_KEY_GRAVE                     {6 ,0x20}
-#define HID_NKRO_KEY_COMMA                     {6 ,0x40}
-#define HID_NKRO_KEY_PERIOD                    {6 ,0x80}
-#define HID_NKRO_KEY_SLASH                     {7 ,0x01}
-#define HID_NKRO_KEY_CAPS_LOCK                 {7 ,0x02}
-#define HID_NKRO_KEY_F1                        {7 ,0x04}
-#define HID_NKRO_KEY_F2                        {7 ,0x08}
-#define HID_NKRO_KEY_F3                        {7 ,0x10}
-#define HID_NKRO_KEY_F4                        {7 ,0x20}
-#define HID_NKRO_KEY_F5                        {7 ,0x40}
-#define HID_NKRO_KEY_F6                        {7 ,0x80}
-#define HID_NKRO_KEY_F7                        {8 ,0x01}
-#define HID_NKRO_KEY_F8                        {8 ,0x02}
-#define HID_NKRO_KEY_F9                        {8 ,0x04}
-#define HID_NKRO_KEY_F10                       {8 ,0x08}
-#define HID_NKRO_KEY_F11                       {8 ,0x10}
-#define HID_NKRO_KEY_F12                       {8 ,0x20}
-#define HID_NKRO_KEY_PRINT_SCREEN              {8 ,0x40}
-#define HID_NKRO_KEY_SCROLL_LOCK               {8 ,0x80}
-#define HID_NKRO_KEY_PAUSE                     {9 ,0x01}
-#define HID_NKRO_KEY_INSERT                    {9 ,0x02}
-#define HID_NKRO_KEY_HOME                      {9 ,0x04}
-#define HID_NKRO_KEY_PAGE_UP                   {9 ,0x08}
-#define HID_NKRO_KEY_DELETE                    {9 ,0x10}
-#define HID_NKRO_KEY_END                       {9 ,0x20}
-#define HID_NKRO_KEY_PAGE_DOWN                 {9 ,0x40}
-#define HID_NKRO_KEY_ARROW_RIGHT               {9 ,0x80}
-#define HID_NKRO_KEY_ARROW_LEFT                {10 ,0x01}
-#define HID_NKRO_KEY_ARROW_DOWN                {10 ,0x02}
-#define HID_NKRO_KEY_ARROW_UP                  {10 ,0x04}
-#define HID_NKRO_KEY_NUM_LOCK                  {10 ,0x08}
-#define HID_NKRO_KEY_KEYPAD_DIVIDE             {10 ,0x10}
-#define HID_NKRO_KEY_KEYPAD_MULTIPLY           {10 ,0x20}
-#define HID_NKRO_KEY_KEYPAD_SUBTRACT           {10 ,0x40}
-#define HID_NKRO_KEY_KEYPAD_ADD                {10 ,0x80}
-#define HID_NKRO_KEY_KEYPAD_ENTER              {11 ,0x01}
-#define HID_NKRO_KEY_KEYPAD_1                  {11 ,0x02}
-#define HID_NKRO_KEY_KEYPAD_2                  {11 ,0x04}
-#define HID_NKRO_KEY_KEYPAD_3                  {11 ,0x08}
-#define HID_NKRO_KEY_KEYPAD_4                  {11 ,0x10}
-#define HID_NKRO_KEY_KEYPAD_5                  {11 ,0x20}
-#define HID_NKRO_KEY_KEYPAD_6                  {11 ,0x40}
-#define HID_NKRO_KEY_KEYPAD_7                  {11 ,0x80}
-#define HID_NKRO_KEY_KEYPAD_8                  {12 ,0x01}
-#define HID_NKRO_KEY_KEYPAD_9                  {12 ,0x02}
-#define HID_NKRO_KEY_KEYPAD_0                  {12 ,0x04}
-#define HID_NKRO_KEY_KEYPAD_DECIMAL            {12 ,0x08}
-#define HID_NKRO_KEY_EUROPE_2                  {12 ,0x10}
-#define HID_NKRO_KEY_APPLICATION               {12 ,0x20}
-#define HID_NKRO_KEY_POWER                     {12 ,0x40}
-#define HID_NKRO_KEY_KEYPAD_EQUAL              {12 ,0x80}
-#define HID_NKRO_KEY_LEFT_CONTROL              {13 ,0x01}
-#define HID_NKRO_KEY_LEFT_SHIFT                {13 ,0x02}
-#define HID_NKRO_KEY_LEFT_ALT                  {13 ,0x04}
-#define HID_NKRO_KEY_LEFT_GUI                  {13 ,0x08}
-#define HID_NKRO_KEY_RIGHT_CONTROL             {13 ,0x10}
-#define HID_NKRO_KEY_RIGHT_SHIFT               {13 ,0x20}
-#define HID_NKRO_KEY_RIGHT_ALT                 {13 ,0x40}
-#define HID_NKRO_KEY_RIGHT_GUI                 {13 ,0x80}
+#define KC_LEFT_CONTROL              {0 ,0x01}
+#define KC_LEFT_SHIFT                {0 ,0x02}
+#define KC_LEFT_ALT                  {0 ,0x04}
+#define KC_LEFT_GUI                  {0 ,0x08}
+#define KC_RIGHT_CONTROL             {0 ,0x10}
+#define KC_RIGHT_SHIFT               {0 ,0x20}
+#define KC_RIGHT_ALT                 {0 ,0x40}
+#define KC_RIGHT_GUI                 {0 ,0x80}
+#define KC_A                         {1 ,0x10}
+#define KC_B                         {1 ,0x20}
+#define KC_C                         {1 ,0x40}
+#define KC_D                         {1 ,0x80}
+#define KC_E                         {2 ,0x01}
+#define KC_F                         {2 ,0x02}
+#define KC_G                         {2 ,0x04}
+#define KC_H                         {2 ,0x08}
+#define KC_I                         {2 ,0x10}
+#define KC_J                         {2 ,0x20}
+#define KC_K                         {2 ,0x40}
+#define KC_L                         {2 ,0x80}
+#define KC_M                         {3 ,0x01}
+#define KC_N                         {3 ,0x02}
+#define KC_O                         {3 ,0x04}
+#define KC_P                         {3 ,0x08}
+#define KC_Q                         {3 ,0x10}
+#define KC_R                         {3 ,0x20}
+#define KC_S                         {3 ,0x40}
+#define KC_T                         {3 ,0x80}
+#define KC_U                         {4 ,0x01}
+#define KC_V                         {4 ,0x02}
+#define KC_W                         {4 ,0x04}
+#define KC_X                         {4 ,0x08}
+#define KC_Y                         {4 ,0x10}
+#define KC_Z                         {4 ,0x20}
+#define KC_1                         {4 ,0x40}
+#define KC_2                         {4 ,0x80}
+#define KC_3                         {5 ,0x01}
+#define KC_4                         {5 ,0x02}
+#define KC_5                         {5 ,0x04}
+#define KC_6                         {5 ,0x08}
+#define KC_7                         {5 ,0x10}
+#define KC_8                         {5 ,0x20}
+#define KC_9                         {5 ,0x40}
+#define KC_0                         {5 ,0x80}
+#define KC_ENTER                     {6 ,0x01}
+#define KC_ESCAPE                    {6 ,0x02}
+#define KC_BACKSPACE                 {6 ,0x04}
+#define KC_TAB                       {6 ,0x08}
+#define KC_SPACE                     {6 ,0x10}
+#define KC_MINUS                     {6 ,0x20}
+#define KC_EQUAL                     {6 ,0x40}
+#define KC_BRACKET_LEFT              {6 ,0x80}
+#define KC_BRACKET_RIGHT             {7 ,0x01}
+#define KC_BACKSLASH                 {7 ,0x02}
+#define KC_EUROPE_1                  {7 ,0x04}
+#define KC_SEMICOLON                 {7 ,0x08}
+#define KC_APOSTROPHE                {7 ,0x10}
+#define KC_GRAVE                     {7 ,0x20}
+#define KC_COMMA                     {7 ,0x40}
+#define KC_PERIOD                    {7 ,0x80}
+#define KC_SLASH                     {8 ,0x01}
+#define KC_CAPS_LOCK                 {8 ,0x02}
+#define KC_F1                        {8 ,0x04}
+#define KC_F2                        {8 ,0x08}
+#define KC_F3                        {8 ,0x10}
+#define KC_F4                        {8 ,0x20}
+#define KC_F5                        {8 ,0x40}
+#define KC_F6                        {8 ,0x80}
+#define KC_F7                        {9 ,0x01}
+#define KC_F8                        {9 ,0x02}
+#define KC_F9                        {9 ,0x04}
+#define KC_F10                       {9 ,0x08}
+#define KC_F11                       {9 ,0x10}
+#define KC_F12                       {9 ,0x20}
+#define KC_PRINT_SCREEN              {9 ,0x40}
+#define KC_SCROLL_LOCK               {9 ,0x80}
+#define KC_PAUSE                     {10 ,0x01}
+#define KC_INSERT                    {10 ,0x02}
+#define KC_HOME                      {10 ,0x04}
+#define KC_PAGE_UP                   {10 ,0x08}
+#define KC_DELETE                    {10 ,0x10}
+#define KC_END                       {10 ,0x20}
+#define KC_PAGE_DOWN                 {10 ,0x40}
+#define KC_ARROW_RIGHT               {10 ,0x80}
+#define KC_ARROW_LEFT                {11 ,0x01}
+#define KC_ARROW_DOWN                {11 ,0x02}
+#define KC_ARROW_UP                  {11 ,0x04}
+#define KC_NUM_LOCK                  {11 ,0x08}
+#define KC_KEYPAD_DIVIDE             {11 ,0x10}
+#define KC_KEYPAD_MULTIPLY           {11 ,0x20}
+#define KC_KEYPAD_SUBTRACT           {11 ,0x40}
+#define KC_KEYPAD_ADD                {11 ,0x80}
+#define KC_KEYPAD_ENTER              {12 ,0x01}
+#define KC_KEYPAD_1                  {12 ,0x02}
+#define KC_KEYPAD_2                  {12 ,0x04}
+#define KC_KEYPAD_3                  {12 ,0x08}
+#define KC_KEYPAD_4                  {12 ,0x10}
+#define KC_KEYPAD_5                  {12 ,0x20}
+#define KC_KEYPAD_6                  {12 ,0x40}
+#define KC_KEYPAD_7                  {12 ,0x80}
+#define KC_KEYPAD_8                  {13 ,0x01}
+#define KC_KEYPAD_9                  {13 ,0x02}
+#define KC_KEYPAD_0                  {13 ,0x04}
+#define KC_KEYPAD_DECIMAL            {13 ,0x08}
+#define KC_EUROPE_2                  {13 ,0x10}
+#define KC_APPLICATION               {13 ,0x20}
+#define KC_POWER                     {13 ,0x40}
+#define KC_KEYPAD_EQUAL              {13 ,0x80}
+
+#define KEY_VALUE_INITIALIZER_61    {\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+{false, 0},\
+}
 
 #endif

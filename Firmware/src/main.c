@@ -65,7 +65,7 @@ int main(void)
   while (1)
   {
     tud_task(); // tinyusb device task
-    led_blinking_task();
+    //led_blinking_task();
 
     hid_task();
   }
@@ -80,9 +80,10 @@ int main(void)
 //Function that initializes the modlues of the keyboard
 void firmware_init()
 {
-  gpio_init_mask(kbd_mask());
-  gpio_set_dir_in_masked(col_pin_mask());
-  gpio_set_dir_out_masked(row_pin_mask());
+  stdio_init_all();
+  initialize_kbd_gpio();
+  set_kbd_input_pins();
+  set_kbd_output_pins();
   //TO DO other modules
 }
 
@@ -133,24 +134,26 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
       // use to avoid send multiple consecutive zero report for keyboard
       static bool has_keyboard_key = false;
 
-      if ( btn )
+      static KEY_VALUE keyList[61] = KEY_VALUE_INITIALIZER_61;
+
+      uint8_t keyCode[14] = { 0 };
+
+      if (detect_keypresses(keyList))
       {
-        KEY_VALUE keyPresses[61] = { 0 };
-        bool numberOfKeyPresses = 0;
-        uint8_t keycode[14] = { 0 };
+        has_keyboard_key = translate_keypresses_to_bitmap(keyList, keyCode);
+      }
 
-        uint8_t KeyHTest[] = {2, 0x08};
-
-        keycode[KeyHTest[0]] |= KeyHTest[1];
-
-        numberOfKeyPresses = detect_keypresses(keyPresses);
-
-        tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, keycode);
+      if ( btn && has_keyboard_key)
+      {
+        tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, keyCode);
         has_keyboard_key = true;
       }else
       {
         // send empty key report if previously has key pressed
-        if (has_keyboard_key) tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, NULL);
+        if (has_keyboard_key) 
+        {
+          tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, NULL);
+        }
         has_keyboard_key = false;
       }
     }
@@ -165,7 +168,7 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
 void hid_task(void)
 {
   // Poll every 10ms
-  const uint32_t interval_ms = 10;
+  const uint32_t interval_ms = 100;
   static uint32_t start_ms = 0;
 
   if ( board_millis() - start_ms < interval_ms) return; // not enough time
