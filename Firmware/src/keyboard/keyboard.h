@@ -53,8 +53,8 @@ bool translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitMap);
 #define NUMBER_OF_COL_PINS  14
 
 //Microcontroller pins connected to row pins
-#define COL_PIN_0   (uint8_t)0
-#define COL_PIN_1   (uint8_t)1
+#define COL_PIN_0   (uint8_t)26
+#define COL_PIN_1   (uint8_t)27
 #define COL_PIN_2   (uint8_t)2
 #define COL_PIN_3   (uint8_t)3
 #define COL_PIN_4   (uint8_t)4

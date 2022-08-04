@@ -62,7 +62,7 @@ bool detect_keypresses(KEY_VALUE *keyList)
   {
     for (int j = 0; j < NUMBER_OF_ROW_PINS; j++)
     {
-      if (keyMatrix[i][j] > -1)
+      if (keyMatrix[i][j] != -1)
       {
         gpio_put(rowPins[j], false);
 
@@ -130,9 +130,9 @@ bool translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitmap)
 
   for (int i = 0; i < TOTAL_NUMBER_OF_KEYS; i++)
   {
-    //if ((keyList[i].value) && (keyList[i].debounceCountdown == 0))
+    if ((keyList[i].value) && (keyList[i].debounceCountdown == 0))
     {
-      bitmap[layerZeroMap[i][0]] | layerZeroMap[i][1];
+      bitmap[layerZeroMap[i][0]] |= layerZeroMap[i][1];
       hasKey = true;
     }
   }

@@ -65,7 +65,7 @@ int main(void)
   while (1)
   {
     tud_task(); // tinyusb device task
-    //led_blinking_task();
+    led_blinking_task();
 
     hid_task();
   }
@@ -136,23 +136,23 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
 
       static KEY_VALUE keyList[61] = KEY_VALUE_INITIALIZER_61;
 
-      uint8_t keyCode[14] = { 0 };
+      uint8_t keyCode[14] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
       if (detect_keypresses(keyList))
       {
         has_keyboard_key = translate_keypresses_to_bitmap(keyList, keyCode);
       }
 
-      if ( btn && has_keyboard_key)
+      if (/*btn && */has_keyboard_key)
       {
         tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, keyCode);
-        has_keyboard_key = true;
-      }else
+      }
+      else
       {
         // send empty key report if previously has key pressed
         if (has_keyboard_key) 
         {
-          tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, NULL);
+          tud_hid_nkro_keyboard_report(REPORT_ID_KEYBOARD, keyCode);
         }
         has_keyboard_key = false;
       }
@@ -168,7 +168,7 @@ static void send_hid_report(uint8_t report_id, uint32_t btn)
 void hid_task(void)
 {
   // Poll every 10ms
-  const uint32_t interval_ms = 100;
+  const uint32_t interval_ms = 10;
   static uint32_t start_ms = 0;
 
   if ( board_millis() - start_ms < interval_ms) return; // not enough time
