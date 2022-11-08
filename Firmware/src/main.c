@@ -23,13 +23,8 @@
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include "bsp/board.h"
 #include "tusb.h"
-#include "pico/stdlib.h"
 
 #include "keyboard/usb_descriptors.h"
 #include "keyboard/keyboard.h"
@@ -65,7 +60,7 @@ int main(void)
   while (1)
   {
     tud_task(); // tinyusb device task
-    led_blinking_task();
+    //led_blinking_task();
 
     hid_task();
   }

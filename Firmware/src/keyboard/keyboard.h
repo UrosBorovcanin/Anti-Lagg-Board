@@ -3,10 +3,8 @@
 #ifndef KBD_MODULE
 #define KBD_MODULE
 
-#include <stdio.h>
-#include <stdbool.h>
-
 #include "pico/stdlib.h"
+#include "bsp/board.h"
 
 //A structure used to represent a value of the key and the absolute time in which it changed value outside of a debounce timer
 typedef struct KEY_VALUE

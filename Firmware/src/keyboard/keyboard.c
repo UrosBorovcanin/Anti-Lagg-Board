@@ -1,7 +1,6 @@
 
 
 #include "keyboard.h"
-#include "bsp/board.h"
 
 //A function that calculates the mask for the matrix pins of the keyboard
 void initialize_kbd_gpio()
@@ -45,7 +44,9 @@ void set_kbd_output_pins()
   }
 }
 
-
+//This function needs to stay unoptimised since GCC is optimising out the keyPressDetected = true; at line 79
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
 //A function that goes through columns, then rows of pins and checks for connections between them
 //thus detecting keypresses
 bool detect_keypresses(KEY_VALUE *keyList)
@@ -74,9 +75,10 @@ bool detect_keypresses(KEY_VALUE *keyList)
           {
             keyList[currentPinNumber].debounceCountdown = DEBOUNCE_TIME;
           }
-          keyList[currentPinNumber].value = true;
 
           keyPressDetected = true;
+
+          keyList[currentPinNumber].value = true;
         }
         else 
         {
@@ -92,6 +94,7 @@ bool detect_keypresses(KEY_VALUE *keyList)
   }
   return keyPressDetected;
 }
+#pragma GCC pop_options
 
 
 //A function used to manage the debounce timers on key presses
