@@ -38,124 +38,59 @@ bool translate_keypresses_to_bitmap(KEY_VALUE *keyList, uint8_t *bitMap);
 #define NUMBER_OF_ROW_PINS  5
 
 //Microcontroller pins connected to row pins
-#define ROW_PIN_0   (uint8_t)7
-#define ROW_PIN_1   (uint8_t)8
-#define ROW_PIN_2   (uint8_t)9
+#define ROW_PIN_0   (uint8_t)21
+#define ROW_PIN_1   (uint8_t)20
+#define ROW_PIN_2   (uint8_t)11
 #define ROW_PIN_3   (uint8_t)10
-#define ROW_PIN_4   (uint8_t)11
+#define ROW_PIN_4   (uint8_t)9
 
 //Array of row pins initialization
 #define ROW_PINS    {ROW_PIN_0, ROW_PIN_1, ROW_PIN_2, ROW_PIN_3, ROW_PIN_4}
 
 //Total number of pins connected to columns
-#define NUMBER_OF_COL_PINS  14
+#define NUMBER_OF_COL_PINS  4
 
 //Microcontroller pins connected to row pins
-#define COL_PIN_0   (uint8_t)26
-#define COL_PIN_1   (uint8_t)27
-#define COL_PIN_2   (uint8_t)2
-#define COL_PIN_3   (uint8_t)3
-#define COL_PIN_4   (uint8_t)4
-#define COL_PIN_5   (uint8_t)5
-#define COL_PIN_6   (uint8_t)6
-#define COL_PIN_7   (uint8_t)22
-#define COL_PIN_8   (uint8_t)21
-#define COL_PIN_9   (uint8_t)20
-#define COL_PIN_10  (uint8_t)19
-#define COL_PIN_11  (uint8_t)18
-#define COL_PIN_12  (uint8_t)17
-#define COL_PIN_13  (uint8_t)16
+#define COL_PIN_0   (uint8_t)12
+#define COL_PIN_1   (uint8_t)6
+#define COL_PIN_2   (uint8_t)1
+#define COL_PIN_3   (uint8_t)0
 
 //Array of column pins initialization
-#define COL_PINS    {COL_PIN_0, COL_PIN_1, COL_PIN_2, COL_PIN_3, COL_PIN_4, COL_PIN_5, COL_PIN_6, COL_PIN_7,\
-COL_PIN_8, COL_PIN_9, COL_PIN_10, COL_PIN_11, COL_PIN_12, COL_PIN_13}
+#define COL_PINS    {COL_PIN_0, COL_PIN_1, COL_PIN_2, COL_PIN_3}
 
 //The total number of physical keys on the keyboard
-#define TOTAL_NUMBER_OF_KEYS 61
+#define TOTAL_NUMBER_OF_KEYS 17
 
 //Key matrix for the 60 percent board
 //!!Numbers mark the INTERNAL key code, where -1 is NOT CONNECTED!!
 #define KEY_MATRIX {\
-{0, 14, 28, 41, 53}, /*Keys in column 0 */\
-{1, 15, 29, -1, 54}, /*Keys in column 1 */\
-{2, 16, 30, 42, 55}, /*Keys in column 2 */\
-{3, 17, 31, 43, -1}, /*Keys in column 3 */\
-{4, 18, 32, 44, -1}, /*Keys in column 4 */\
-{5, 19, 33, 45, -1}, /*Keys in column 5 */\
-{6, 20, 34, 46, 56}, /*Keys in column 6 */\
-{7, 21, 35, 47, -1}, /*Keys in column 7 */\
-{8, 22, 36, 48, -1}, /*Keys in column 8 */\
-{9, 23, 37, 49, -1}, /*Keys in column 9 */\
-{10, 24, 38, 50, 57}, /*Keys in column 10 */\
-{11, 25, 39, 51, 58}, /*Keys in column 11 */\
-{12, 26, -1, 52, 59}, /*Keys in column 12 */\
-{13, 27, 40, -1, 60} /*Keys in column 13 */\
+{0, 4, 7, 11, -1}, /*Keys in column 0 */\
+{1, 5, 8, 12, 14}, /*Keys in column 1 */\
+{2, 6, 9, 13, 15}, /*Keys in column 2 */\
+{3, -1, 10, -1, 16}, /*Keys in column 3 */\
 }
 
 
 //Keybinds for the first layer
 #define KEYBINDS_LAYER_0 {\
-KC_GRAVE, \
-KC_1, \
-KC_2, \
-KC_3, \
-KC_4, \
-KC_5, \
-KC_6, \
-KC_7, \
-KC_8, \
-KC_9, \
-KC_0, \
-KC_MINUS, \
-KC_EQUAL, \
-KC_BACKSPACE, \
-KC_TAB, \
-KC_Q, \
-KC_W, \
-KC_E, \
-KC_R, \
-KC_T, \
-KC_Y, \
-KC_U, \
-KC_I, \
-KC_O, \
-KC_P, \
-KC_BRACKET_LEFT, \
-KC_BRACKET_RIGHT, \
-KC_BACKSLASH, \
-KC_CAPS_LOCK, \
-KC_A, \
-KC_S, \
-KC_D, \
-KC_F, \
-KC_G, \
-KC_H, \
-KC_J, \
-KC_K, \
-KC_L, \
-KC_SEMICOLON, \
-KC_APOSTROPHE, \
-KC_ENTER, \
-KC_RIGHT_SHIFT, \
-KC_Z, \
-KC_X, \
-KC_C, \
-KC_V, \
-KC_B, \
-KC_N, \
-KC_M, \
-KC_COMMA, \
-KC_PERIOD, \
-KC_SLASH, \
-KC_LEFT_SHIFT, \
-KC_LEFT_CONTROL, \
-KC_LEFT_GUI, \
-KC_LEFT_ALT, \
-KC_SPACE, \
-KC_RIGHT_ALT, \
-KC_RIGHT_GUI, \
-KC_APPLICATION, \
-KC_RIGHT_CONTROL, \
+KC_NUM_LOCK, \
+KC_KEYPAD_DIVIDE,\
+KC_KEYPAD_MULTIPLY,\
+KC_KEYPAD_SUBTRACT,\
+KC_KEYPAD_7,\
+KC_KEYPAD_8,\
+KC_KEYPAD_9,\
+KC_KEYPAD_4,\
+KC_KEYPAD_5,\
+KC_KEYPAD_6,\
+KC_KEYPAD_ADD,\
+KC_KEYPAD_1,\
+KC_KEYPAD_2,\
+KC_KEYPAD_3,\
+KC_KEYPAD_0,\
+KC_KEYPAD_DECIMAL,\
+KC_KEYPAD_ENTER\
 }
 
 //Key masks for writing proper USB report packets
