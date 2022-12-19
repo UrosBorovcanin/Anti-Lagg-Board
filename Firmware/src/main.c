@@ -26,8 +26,15 @@
 #include "bsp/board.h"
 #include "tusb.h"
 
+#include "pico/stdlib.h"
+#include "pico/multicore.h"
+
 #include "keyboard/usb_descriptors.h"
 #include "keyboard/keyboard.h"
+
+#include "oled/oled.h"
+
+#include "encoder/encoder.h"
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
@@ -47,8 +54,8 @@ enum  {
 static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
 void firmware_init();
-void led_blinking_task(void);
 void hid_task(void);
+void core1_entry();
 
 /*------------- MAIN -------------*/
 int main(void)
@@ -60,13 +67,26 @@ int main(void)
   while (1)
   {
     tud_task(); // tinyusb device task
-    //led_blinking_task();
 
     hid_task();
   }
 
   return 0;
 }
+
+/*----CORE1_ENTRY (CORE1 MAIN)----*/ 
+void core1_entry()
+{
+  display_test();
+  encoder_init();
+
+  bool keepTheCoreBusy = false;
+
+  while(1)
+  {
+    keepTheCoreBusy = !keepTheCoreBusy;
+  }
+}      
 
 //--------------------------------------------------------------------+
 // Firmware initialization
@@ -75,10 +95,19 @@ int main(void)
 //Function that initializes the modlues of the keyboard
 void firmware_init()
 {
-  stdio_init_all();
+  //stdio_init_all();
+  //initialization for the keyboard module
   initialize_kbd_gpio();
   set_kbd_input_pins();
   set_kbd_output_pins();
+
+  //core1_entry();
+
+  //initialization of the second core
+  multicore_reset_core1();
+  sleep_ms(1000);
+  multicore_launch_core1(core1_entry);
+
   //TO DO other modules
 }
 
@@ -235,32 +264,12 @@ void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_
       {
         // Capslock On: disable blink, turn led on
         blink_interval_ms = 0;
-        board_led_write(true);
+        //board_led_write(true);
       }else
       {
         // Caplocks Off: back to normal blink
-        board_led_write(false);
-        blink_interval_ms = BLINK_MOUNTED;
+        //board_led_write(false);
       }
     }
   }
-}
-
-//--------------------------------------------------------------------+
-// BLINKING TASK
-//--------------------------------------------------------------------+
-void led_blinking_task(void)
-{
-  static uint32_t start_ms = 0;
-  static bool led_state = false;
-
-  // blink is disabled
-  if (!blink_interval_ms) return;
-
-  // Blink every interval ms
-  if ( board_millis() - start_ms < blink_interval_ms) return; // not enough time
-  start_ms += blink_interval_ms;
-
-  board_led_write(led_state);
-  led_state = 1 - led_state; // toggle
 }

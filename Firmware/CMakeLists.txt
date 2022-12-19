@@ -15,11 +15,19 @@ family_initialize_project(${PROJECT} ${CMAKE_CURRENT_LIST_DIR})
 
 add_executable(${PROJECT})
 
+target_link_libraries(${PROJECT} PUBLIC
+        pico_stdlib
+        pico_multicore
+        hardware_i2c
+)
+
 # Example source
 target_sources(${PROJECT} PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/main.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/keyboard/usb_descriptors.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/keyboard/keyboard.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/oled/oled.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/encoder/encoder.c
         )
 
 # Example include
