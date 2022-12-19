@@ -80,11 +80,9 @@ void core1_entry()
   display_test();
   encoder_init();
 
-  bool keepTheCoreBusy = false;
-
-  while(1)
+  while (1)
   {
-    keepTheCoreBusy = !keepTheCoreBusy;
+    tight_loop_contents();
   }
 }      
 
@@ -105,7 +103,6 @@ void firmware_init()
 
   //initialization of the second core
   multicore_reset_core1();
-  sleep_ms(1000);
   multicore_launch_core1(core1_entry);
 
   //TO DO other modules
