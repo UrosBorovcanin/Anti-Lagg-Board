@@ -91,3 +91,5 @@ void oled_init();
 void render(uint8_t *buf, struct render_area *area);
 
 void display_test();
+
+void oled_update();

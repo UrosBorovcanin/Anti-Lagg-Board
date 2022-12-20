@@ -206,7 +206,7 @@ void display_test() {
     struct render_area area = {start_col: 0, end_col : IMG_WIDTH - 1, start_page : 0, end_page : OLED_NUM_PAGES - 1};
     calc_render_area_buflen(&area);
     render(raspberry26x32, &area);
-    for (int i = 1; i < 3; i++) {
+    for (int i = 1; i < 4; i++) {
         uint8_t offset = 5 + IMG_WIDTH; // 5px padding
         area.start_col += offset;
         area.end_col += offset;
@@ -226,4 +226,16 @@ void display_test() {
     oled_send_cmd(OLED_SET_SCROLL | 0x01);
     
 #endif
+}
+
+void oled_update()
+{
+    if (time_us_64() % 2000000 > 1000000) 
+    {
+        oled_send_cmd(0xA5);
+    }
+    else
+    {
+        oled_send_cmd(0xA4);
+    } 
 }
