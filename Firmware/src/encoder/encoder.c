@@ -66,6 +66,37 @@ void encoder_callback(uint gpio, uint32_t events)
 	
 }
 
+void encoder_callback1(uint gpio, uint32_t events)
+{
+	static bool ccw = false, cw = false;
+
+	static bool ledValue = false;
+
+	static uint64_t lastCallTime = 0, currentCallTime = 0;
+
+	currentCallTime = time_us_64();
+
+	if ((currentCallTime - lastCallTime) > 10000)
+	{
+		lastCallTime = currentCallTime;
+			
+		if (gpio_get(ENC_B))
+		{
+			ccw = true;
+			cw = false;
+			gpio_put(25, ledValue);
+			ledValue = !ledValue;
+		}
+		else 
+		{
+			cw = true;
+			ccw = false;
+			gpio_put(25, ledValue);
+			ledValue = !ledValue;
+		}
+	}
+}
+
 void encoder_init()
 {
     gpio_init(ENC_SW);					//Initialise a GPIO for (enabled I/O and set func to GPIO_FUNC_SIO)
@@ -80,7 +111,7 @@ void encoder_init()
     gpio_set_dir(ENC_B,GPIO_IN);
 	gpio_pull_up(ENC_B);
 
-	gpio_set_irq_enabled_with_callback(ENC_SW, GPIO_IRQ_EDGE_FALL, true, &encoder_callback);
+	gpio_set_irq_enabled_with_callback(ENC_SW, GPIO_IRQ_EDGE_FALL, true, &encoder_callback1);
     gpio_set_irq_enabled(ENC_A, GPIO_IRQ_EDGE_FALL, true);
-	gpio_set_irq_enabled(ENC_B, GPIO_IRQ_EDGE_FALL, true);
+	//gpio_set_irq_enabled(ENC_B, GPIO_IRQ_EDGE_FALL, true);
 }

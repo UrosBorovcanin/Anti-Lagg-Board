@@ -66,9 +66,9 @@ int main(void)
 
   while (1)
   {
-    tud_task(); // tinyusb device task
-
     hid_task();
+
+    tud_task(); // tinyusb device task 
   }
 
   return 0;
@@ -77,12 +77,13 @@ int main(void)
 /*----CORE1_ENTRY (CORE1 MAIN)----*/ 
 void core1_entry()
 {
-  display_test();
+  //display_test();
   encoder_init();
 
   while (1)
   {
     tight_loop_contents();
+    //oled_update();
   }
 }      
 
@@ -102,8 +103,8 @@ void firmware_init()
   //core1_entry();
 
   //initialization of the second core
-  multicore_reset_core1();
   multicore_launch_core1(core1_entry);
+  sleep_ms(3000);
 
   //TO DO other modules
 }
