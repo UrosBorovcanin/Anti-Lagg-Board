@@ -57,7 +57,7 @@ void calc_render_area_buflen(struct render_area *area) {
 void oled_send_cmd(uint8_t cmd) {
     // I2C write process expects a control byte followed by data
     // this "data" can be a command or data to follow up a command
-
+    
     // Co = 1, D/C = 0 => the driver expects a command
     uint8_t buf[2] = {0x80, cmd};
     i2c_write_blocking(i2c_default, (OLED_ADDR & OLED_WRITE_MODE), buf, 2, false);
@@ -160,6 +160,8 @@ void render(uint8_t *buf, struct render_area *area) {
 
 void display_test() {
 
+    irq_set_mask_enabled(0xFFFFFFFF, false);
+
 #if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
 #warning i2c / oled_i2d example requires a board with I2C pins
     puts("Default I2C pins were not defined");
@@ -206,7 +208,7 @@ void display_test() {
     struct render_area area = {start_col: 0, end_col : IMG_WIDTH - 1, start_page : 0, end_page : OLED_NUM_PAGES - 1};
     calc_render_area_buflen(&area);
     render(raspberry26x32, &area);
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i < 3; i++) {
         uint8_t offset = 5 + IMG_WIDTH; // 5px padding
         area.start_col += offset;
         area.end_col += offset;

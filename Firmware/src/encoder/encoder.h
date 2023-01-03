@@ -15,6 +15,4 @@
 
 void encoder_callback(uint gpio, uint32_t events);
 
-void encoder_callback1(uint gpio, uint32_t events);
-
 void encoder_init();

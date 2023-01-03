@@ -77,13 +77,14 @@ int main(void)
 /*----CORE1_ENTRY (CORE1 MAIN)----*/ 
 void core1_entry()
 {
-  //display_test();
+  irq_set_mask_enabled(0xFFFFFFFF, false);
+  display_test();
   encoder_init();
 
   while (1)
   {
     tight_loop_contents();
-    //oled_update();
+    oled_update();
   }
 }      
 
@@ -99,8 +100,6 @@ void firmware_init()
   initialize_kbd_gpio();
   set_kbd_input_pins();
   set_kbd_output_pins();
-
-  //core1_entry();
 
   //initialization of the second core
   multicore_launch_core1(core1_entry);
