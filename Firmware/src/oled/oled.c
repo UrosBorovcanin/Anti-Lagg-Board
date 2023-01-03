@@ -57,10 +57,11 @@ void calc_render_area_buflen(struct render_area *area) {
 void oled_send_cmd(uint8_t cmd) {
     // I2C write process expects a control byte followed by data
     // this "data" can be a command or data to follow up a command
-    
+    //irq_set_mask_enabled(0xFFFFFFFF, false);
     // Co = 1, D/C = 0 => the driver expects a command
     uint8_t buf[2] = {0x80, cmd};
     i2c_write_blocking(i2c_default, (OLED_ADDR & OLED_WRITE_MODE), buf, 2, false);
+    //irq_set_mask_enabled(0xFFFFFFFF, true);
 }
 
 void oled_send_buf(uint8_t buf[], int buflen) {
@@ -159,9 +160,6 @@ void render(uint8_t *buf, struct render_area *area) {
 #endif
 
 void display_test() {
-
-    irq_set_mask_enabled(0xFFFFFFFF, false);
-
 #if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
 #warning i2c / oled_i2d example requires a board with I2C pins
     puts("Default I2C pins were not defined");
@@ -228,16 +226,4 @@ void display_test() {
     oled_send_cmd(OLED_SET_SCROLL | 0x01);
     
 #endif
-}
-
-void oled_update()
-{
-    if (time_us_64() % 2000000 > 1000000) 
-    {
-        oled_send_cmd(0xA5);
-    }
-    else
-    {
-        oled_send_cmd(0xA4);
-    } 
 }

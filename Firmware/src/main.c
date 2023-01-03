@@ -77,14 +77,15 @@ int main(void)
 /*----CORE1_ENTRY (CORE1 MAIN)----*/ 
 void core1_entry()
 {
+  sleep_ms(1000);
   irq_set_mask_enabled(0xFFFFFFFF, false);
+  
   display_test();
   encoder_init();
 
   while (1)
   {
     tight_loop_contents();
-    oled_update();
   }
 }      
 
@@ -101,10 +102,6 @@ void firmware_init()
   set_kbd_input_pins();
   set_kbd_output_pins();
 
-  //initialization of the second core
-  multicore_launch_core1(core1_entry);
-  sleep_ms(3000);
-
   //TO DO other modules
 }
 
@@ -115,13 +112,14 @@ void firmware_init()
 // Invoked when device is mounted
 void tud_mount_cb(void)
 {
-  blink_interval_ms = BLINK_MOUNTED;
+  multicore_reset_core1();  
+  multicore_launch_core1(core1_entry);
 }
 
 // Invoked when device is unmounted
 void tud_umount_cb(void)
 {
-  blink_interval_ms = BLINK_NOT_MOUNTED;
+  multicore_reset_core1();
 }
 
 // Invoked when usb bus is suspended
@@ -136,7 +134,7 @@ void tud_suspend_cb(bool remote_wakeup_en)
 // Invoked when usb bus is resumed
 void tud_resume_cb(void)
 {
-  blink_interval_ms = BLINK_MOUNTED;
+  
 }
 
 //--------------------------------------------------------------------+

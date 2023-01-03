@@ -1,5 +1,5 @@
 #include "encoder.h"
-
+#include "oled/oled.h"
 
 
 
@@ -17,11 +17,27 @@ void encoder_callback(uint gpio, uint32_t events)
 
 	static bool ledValue = false;
 
+	static bool screenValue = false;
+
 	static uint64_t lastCallTime = 0;
 	uint64_t currentCallTime = 0;
 	
 	lastCallTime = currentCallTime;
-		
+	
+	if (gpio == ENC_SW)
+	{
+		screenValue = !screenValue;
+
+		if (screenValue)
+		{
+			oled_send_cmd(0xA5);
+		}
+		else
+		{
+			oled_send_cmd(0xA4);
+		}
+	}
+
 	if (gpio_get(ENC_B))
 	{
 		ccw = true;

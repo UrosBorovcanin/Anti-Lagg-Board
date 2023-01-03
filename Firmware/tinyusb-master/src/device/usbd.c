@@ -529,8 +529,8 @@ void tud_task_ext(uint32_t timeout_ms, bool in_isr)
         {
           TU_LOG2("  Stall EP0\r\n");
           // Failed -> stall both control endpoint IN and OUT
-          //dcd_edpt_stall(event.rhport, 0);
-          //dcd_edpt_stall(event.rhport, 0 | TUSB_DIR_IN_MASK);
+          dcd_edpt_stall(event.rhport, 0);                        
+          dcd_edpt_stall(event.rhport, 0 | TUSB_DIR_IN_MASK);
         }
       break;
 
