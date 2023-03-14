@@ -28,6 +28,7 @@
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
+#include "pico/util/queue.h"
 
 #include "keyboard/usb_descriptors.h"
 #include "keyboard/keyboard.h"
@@ -35,6 +36,8 @@
 #include "oled/oled.h"
 
 #include "encoder/encoder.h"
+
+#include <stdio.h>
 
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
@@ -53,6 +56,8 @@ enum  {
 
 static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
+static queue_t commandQueue, resultQueue;
+
 void firmware_init();
 void hid_task(void);
 void core1_entry();
@@ -63,6 +68,8 @@ int main(void)
   board_init();
   tusb_init();
   firmware_init();
+
+  board_led_write(false);
 
   while (1)
   {
@@ -78,14 +85,12 @@ int main(void)
 void core1_entry()
 {
   sleep_ms(1000);
-  irq_set_mask_enabled(0xFFFFFFFF, false);
-  
-  display_test();
+
   encoder_init();
 
-  while (1)
+  while (true)
   {
-    tight_loop_contents();
+    sleep_ms(1000);
   }
 }      
 
@@ -114,6 +119,8 @@ void tud_mount_cb(void)
 {
   multicore_reset_core1();  
   multicore_launch_core1(core1_entry);
+  
+  //display_test();
 }
 
 // Invoked when device is unmounted

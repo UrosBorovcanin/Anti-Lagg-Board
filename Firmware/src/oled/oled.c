@@ -19,17 +19,17 @@ void print_buf_page(uint8_t buf[], uint8_t page) {
     // prints one page of a full length (128x4) buffer
     for (int j = 0; j < OLED_PAGE_HEIGHT; j++) {
         for (int k = 0; k < OLED_WIDTH; k++) {
-            //printf("%u", (buf[page * OLED_WIDTH + k] >> j) & 0x01);
+            printf("%u", (buf[page * OLED_WIDTH + k] >> j) & 0x01);
         }
-        //printf("\n");
+        printf("\n");
     }
 }
 
 void print_buf_pages(uint8_t buf[]) {
     // prints all pages of a full length buffer
     for (int i = 0; i < OLED_NUM_PAGES; i++) {
-        //printf("--page %d--\n", i);
-        //print_buf_page(buf, i);
+        printf("--page %d--\n", i);
+        print_buf_page(buf, i);
     }
 }
 
@@ -40,9 +40,9 @@ void print_buf_area(uint8_t *buf, struct render_area *area) {
     for (int i = 0; i < area_height; i++) {
         for (int j = 0; j < OLED_PAGE_HEIGHT; j++) {
             for (int k = 0; k < area_width; k++) {
-                //printf("%u", (buf[i * area_width + k] >> j) & 0x01);
+                printf("%u", (buf[i * area_width + k] >> j) & 0x01);
             }
-            //printf("\n");
+            printf("\n");
         }
     }
 }
@@ -195,12 +195,12 @@ void display_test() {
     render(buf, &frame_area);
 
     // intro sequence: flash the screen 3 times
-    /*for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         oled_send_cmd(0xA5); // ignore RAM, all pixels on
         sleep_ms(500);
         oled_send_cmd(0xA4); // go back to following RAM
         sleep_ms(500);
-    }*/
+    }
 
     // render 3 cute little raspberries
     struct render_area area = {start_col: 0, end_col : IMG_WIDTH - 1, start_page : 0, end_page : OLED_NUM_PAGES - 1};
@@ -223,7 +223,7 @@ void display_test() {
     oled_send_cmd(0xFF); // dummy byte
 
     // let's goooo!
-    oled_send_cmd(OLED_SET_SCROLL | 0x01);
+    //oled_send_cmd(OLED_SET_SCROLL | 0x01);
     
 #endif
 }
